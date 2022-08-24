@@ -7,6 +7,8 @@
   "use strict";
 
   let forms = document.querySelectorAll('.php-email-form');
+  let name = document.querySelector('.form-control')
+  
 
   forms.forEach( function(e) {
     e.addEventListener('submit', function(event) {
@@ -26,6 +28,8 @@
       thisForm.querySelector('.sent-message').classList.remove('d-block');
 
       let formData = new FormData( thisForm );
+      
+      
 
       if ( recaptcha ) {
         if(typeof grecaptcha !== "undefined" ) {
@@ -50,16 +54,23 @@
   });
 
   function php_email_form_submit(thisForm, action, formData) {
+    
     fetch(action, {
       method: 'POST',
-      body: formData,
-      headers: {'X-Requested-With': 'XMLHttpRequest'}
+      headers : {
+        "Content-Type" : "application/json"
+      },
+      body:JSON.stringify({
+        "name" : formData.name,
+        "message" : formData.message
+      })
+      
     })
     .then(response => {
-      if( response.ok ) {
+      if( response.sucess ) {
         return response.text()
       } else {
-        throw new Error(`${response.status} ${response.statusText} ${response.url}`); 
+        throw new Error(`${response.error} `); 
       }
     })
     .then(data => {
